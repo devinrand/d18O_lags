@@ -1,0 +1,4 @@
+data_type: d18O
+IsLearn_transition: no
+stack_min: -inf
+stack_max: inf
