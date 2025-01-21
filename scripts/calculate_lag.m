@@ -2,6 +2,7 @@ function lags = calculate_lag(C14_results,d18O_results,lag_interp,max_samp,save_
 
 % loop through cores
 for i = 1:length(C14_results.summary)
+    disp(['Core ',num2str(i),'/',num2str(length(C14_results.summary))])
     C14_samples = C14_results.summary(i).age_samples;
     C14_depths = C14_results.summary(i).depth;
     d18O_depths = d18O_results.summary(i).depth;

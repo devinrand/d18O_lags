@@ -75,8 +75,8 @@ if run == 6
 end
 
 if run == 7
-    IM = load(fullfile(outputdir_IM_vs_EEP,'Iberian Margin_both_stack','stack.txt'));
-    EEP = load(fullfile(outputdir_IM_vs_EEP,'EEP_both_stack','stack.txt'));
+    IM = load('Iberian Margin_both_stack','stack.txt');
+    EEP = load('BIGMACS_outputs\IM_vs_EEP\EEP_both_stack\stack.txt');
     ind = find(IM(:,1)==30);% truncate IM at at 30 ka BP
     IM(ind:end,:) = [];
     h = 0.13; % shift
