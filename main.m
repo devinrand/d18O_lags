@@ -6,6 +6,8 @@ projectdir = pwd;
 outputdir_brazil = fullfile(projectdir,'BIGMACS_outputs','Brazil_Margin');
 outputdir_atlantic = fullfile(projectdir,'BIGMACS_outputs','Atlantic');
 outputdir_IM_vs_EEP = fullfile(projectdir,'BIGMACS_outputs','IM_vs_EEP');
+outputdir_brazilv1_1 = fullfile(projectdir,'BIGMACSv1.1_outputs','Brazil_Margin');
+outputdir_Atlanticv1_1 = fullfile(projectdir,'BIGMACSv1.1_outputs','Atlantic');
 addpath(fullfile(projectdir,'scripts'))
 
 % 1 -> default Brazil Margin run
@@ -15,17 +17,19 @@ addpath(fullfile(projectdir,'scripts'))
 % 5 -> Atlantic run
 % 6 -> Iberian Margin cores aligned to Eastern Equatorial Pacific stack
 % 7 -> Bayesian Inversion to calculate lag directly between IM and EEP
+% 8 -> default Brazil Margin run with age models from BIGMACS v1.1
+% 9 -> Atlantic run with age models from BIGMACS v1.1
 
 
-run = 7;
-num_samp = 1000;
-save_samp = 'yes';
+run = 9;
+num_samp = 1000; % number of lag MC samples.
+save_samp = 'yes'; % save samples...yes or no
 
 % set times to calculate lag
 lag_times = 12:2:18;
 
 
-if run == 1 || run == 3 || run == 4
+if run == 1 || run == 3 || run == 4 || run == 8
     % load d18O age models
     if run == 1
         d18O = load(fullfile(outputdir_brazil,'d18O','results.mat'));
@@ -33,9 +37,15 @@ if run == 1 || run == 3 || run == 4
         d18O = load(fullfile(outputdir_brazil,'d18O Lund','results.mat'));
     elseif run == 4
         d18O = load(fullfile(outputdir_brazil,'d18O ITWA','results.mat'));
+    elseif run == 8
+        d18O = load(fullfile(outputdir_brazilv1_1,'d18O','results.mat'));
     end
     % load C14 age models
-    C14 = load(fullfile(outputdir_brazil,'C14','results.mat'));
+    if run == 8
+        C14 = load(fullfile(outputdir_brazilv1_1,'C14','results.mat'));
+    else
+        C14 = load(fullfile(outputdir_brazil,'C14','results.mat'));
+    end
     % calculate lags
     disp('Calculating Lags')
     lags = calculate_lag(C14,d18O,lag_times,num_samp,save_samp);
@@ -65,6 +75,13 @@ if run == 5
     lags = calculate_lag(C14,d18O,lag_times,num_samp,save_samp);
 end
 
+% load Atlantic age models from BIGMACS v1.1 and calculate lags
+if run == 9
+    d18O = load(fullfile(outputdir_Atlanticv1_1,'d18O','results.mat'));
+    C14 = load(fullfile(outputdir_Atlanticv1_1,'C14','results.mat'));
+    lags = calculate_lag(C14,d18O,lag_times,num_samp,save_samp);
+end
+
 if run == 6
     d18O = load(fullfile(outputdir_IM_vs_EEP, 'IMcores_EEP_d18O','results.mat'));
     C14 = load(fullfile(outputdir_IM_vs_EEP,'Iberian Margin_both_stack','results.mat'));
@@ -91,5 +108,7 @@ if run == 7
         [postG(j,:),mean_lagG(j,:),upper_lagG(j,:),lower_lagG(j,:),max_probG(j)] = analytical(EEP,IM,t(j),h,s,prior,mu,prior_std,L);
     end
 end
+
+
 
 
